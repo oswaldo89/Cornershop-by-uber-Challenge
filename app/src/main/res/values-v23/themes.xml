@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.CountersNormal" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
@@ -13,6 +14,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:windowLightStatusBar">true</item>
+        <!-- screen background -->
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="Theme.CountersWelcome" parent="Theme.CountersNormal">
@@ -21,6 +24,10 @@
 
     <style name="LoadingProgressBar" parent="Theme.CountersNormal">
         <item name="colorAccent">@color/orange</item>
+    </style>
+
+    <style name="ToolbarMenu">
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>

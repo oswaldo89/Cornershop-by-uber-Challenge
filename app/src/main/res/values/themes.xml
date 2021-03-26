@@ -12,6 +12,8 @@
         <item name="android:textColorTertiary">@color/light_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
+        <!-- screen background -->
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="Theme.CountersWelcome" parent="Theme.CountersNormal">
@@ -20,6 +22,10 @@
 
     <style name="LoadingProgressBar" parent="Theme.CountersNormal">
         <item name="colorAccent">@color/orange</item>
+    </style>
+
+    <style name="ToolbarMenu">
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>
