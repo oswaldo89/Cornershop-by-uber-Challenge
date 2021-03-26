@@ -19,4 +19,8 @@
         <item name="android:windowBackground">@color/welcome_background</item>
     </style>
 
+    <style name="LoadingProgressBar" parent="Theme.CountersNormal">
+        <item name="colorAccent">@color/orange</item>
+    </style>
+
 </resources>

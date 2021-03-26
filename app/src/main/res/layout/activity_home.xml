@@ -6,4 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".presentation.home.HomeActivity">
 
+    <TextView
+        android:id="@+id/textNoCounters"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_normal_1"
+        android:text="@string/no_counters"
+        app:layout_constraintBottom_toTopOf="@+id/textDescription"
+        app:layout_constraintEnd_toEndOf="@+id/textDescription"
+        app:layout_constraintStart_toStartOf="@+id/textDescription" />
+
+    <TextView
+        android:id="@+id/textDescription"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_normal_3"
+        android:layout_marginTop="@dimen/margin_normal_1"
+        android:layout_marginEnd="@dimen/margin_normal_3"
+        android:text="@string/no_counters_phrase"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:theme="@style/LoadingProgressBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/containedButton"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_normal_2"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/add_counters"
+        android:textColor="@color/white"
+        app:cornerRadius="@dimen/normal_radius"
+        app:icon="@drawable/ic_plus"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
