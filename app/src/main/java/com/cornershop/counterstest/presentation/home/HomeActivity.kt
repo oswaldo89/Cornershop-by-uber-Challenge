@@ -1,18 +1,18 @@
 package com.cornershop.counterstest.presentation.home
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.cornershop.counterstest.R
 import com.cornershop.counterstest.databinding.ActivityHomeBinding
 import com.cornershop.counterstest.presentation.BaseActivity
 
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
+
+    override fun getViewBinding(): ActivityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +43,5 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     fun addCounter(view: View) {
         showToolbar()
     }
-
-
-    override fun getViewBinding(): ActivityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
 
 }
