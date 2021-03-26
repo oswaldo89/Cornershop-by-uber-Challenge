@@ -1,10 +1,12 @@
 package com.cornershop.counterstest.presentation.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.cornershop.counterstest.R
 import com.cornershop.counterstest.databinding.ActivityHomeBinding
@@ -42,5 +44,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         showToolbar()
     }
 
+
     override fun getViewBinding(): ActivityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
+
 }

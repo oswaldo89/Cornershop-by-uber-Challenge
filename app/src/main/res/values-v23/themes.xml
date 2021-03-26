@@ -16,6 +16,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <!-- screen background -->
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColorHint">@color/light_gray</item>
     </style>
 
     <style name="Theme.CountersWelcome" parent="Theme.CountersNormal">
