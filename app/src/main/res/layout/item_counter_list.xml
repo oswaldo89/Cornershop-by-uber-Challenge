@@ -16,11 +16,18 @@
         android:text="@string/n_items"
         android:textSize="@dimen/normal_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline_minus"
+        app:layout_constraintEnd_toStartOf="@id/guideline_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry"
         tools:text="Number of times I’ve forgotten my mother’s name because I was high on Frugelés." />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".73" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_minus"
@@ -37,10 +44,10 @@
         app:layout_constraintGuide_percent=".9" />
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/decreaseBtn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="3dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
@@ -66,10 +73,10 @@
         tools:text="10" />
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/increaseBtn"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginStart="3dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"

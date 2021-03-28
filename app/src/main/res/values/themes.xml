@@ -13,7 +13,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <!-- screen background -->
-        <item name="android:windowBackground">@color/white</item>
         <item name="android:textColorHint">@color/light_gray</item>
     </style>
 

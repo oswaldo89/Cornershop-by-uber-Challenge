@@ -17,7 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- empty layout -->
+    <include
+        android:id="@+id/emptyLayout"
+        layout="@layout/layout_no_counters"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardSeachView" />
 
+    <!-- inside the cardview are defined the searchview -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardSeachView"
         android:layout_width="match_parent"
@@ -40,12 +51,14 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- *** START - detail text from counters -->
     <TextView
         android:id="@+id/textNumberItems"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal_1"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/n_items"
         android:textSize="@dimen/normal_text_size"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,33 +75,47 @@
         app:layout_constraintBottom_toBottomOf="@+id/textNumberItems"
         app:layout_constraintStart_toEndOf="@+id/textNumberItems"
         app:layout_constraintTop_toTopOf="@+id/textNumberItems" />
+    <!-- *** END - detail text from counters -->
 
-
-    <include
-        android:id="@+id/noCountersContentLayout"
-        layout="@layout/layout_no_counters"
+    <!-- loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:theme="@style/LoadingProgressBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton"
+    <!-- counters list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCounters"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_normal_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNumberItems" />
+
+    <!-- new counter buton -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btnAddNewCounter"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_normal_2"
-        android:onClick="addCounter"
         android:padding="@dimen/normal_padding"
         android:text="@string/add_counters"
         android:textColor="@color/white"
         app:cornerRadius="@dimen/normal_radius"
+        android:onClick="addNewCounter"
         app:icon="@drawable/ic_plus"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

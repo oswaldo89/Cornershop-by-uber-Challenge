@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CountersNormal">
         <activity
+            android:name=".presentation.new_counter.NewCounterActivity"
+            android:theme="@style/Theme.CountersWelcome" />
+        <activity
             android:name=".presentation.home.HomeActivity"
             android:theme="@style/Theme.CountersWelcome" />
         <activity
@@ -26,7 +29,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
     </application>
 
 </manifest>

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.databinding.ItemCounterListBinding
 
-class CountersListAdapter : RecyclerView.Adapter<CountersListAdapter.ViewHolder>() {
+class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>() {
 
     private var items: List<Counter> = ArrayList()
     private lateinit var context: Context
@@ -25,7 +25,6 @@ class CountersListAdapter : RecyclerView.Adapter<CountersListAdapter.ViewHolder>
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCounterListBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding)
-
     }
 
     override fun getItemCount(): Int {
@@ -34,8 +33,8 @@ class CountersListAdapter : RecyclerView.Adapter<CountersListAdapter.ViewHolder>
 
     class ViewHolder(private val itemBinding: ItemCounterListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(item: Counter, context: Context) {
-            //itemBinding.txtTitle.text = item.name
+            itemBinding.txtTitle.text = item.title
+            itemBinding.txtCountNumber.text = "${item.count}"
         }
-
     }
 }

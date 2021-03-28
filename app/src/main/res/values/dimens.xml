@@ -3,11 +3,13 @@
     <dimen name="welcome_logo_size">200dp</dimen>
     <dimen name="margin_big_2">90dp</dimen>
     <dimen name="margin_big_1">60dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
     <dimen name="margin_normal_1">16dp</dimen>
     <dimen name="margin_normal_2">24dp</dimen>
     <dimen name="margin_normal_3">32dp</dimen>
     <dimen name="normal_radius">32dp</dimen>
     <dimen name="normal_padding">15dp</dimen>
     <dimen name="normal_text_size">17sp</dimen>
+    <dimen name="small_text_size">15sp</dimen>
 
 </resources>
