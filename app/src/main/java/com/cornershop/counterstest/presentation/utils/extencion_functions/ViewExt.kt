@@ -18,13 +18,6 @@ fun View.visible(animate: Boolean = true) {
     }
 }
 
-fun View.visibility(enable: Boolean) {
-    visibility = if (enable) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
-}
 
 /** Set the View visibility to INVISIBLE and eventually animate view alpha till 0% */
 fun View.invisible(animate: Boolean = true) {

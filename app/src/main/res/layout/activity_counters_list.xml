@@ -96,6 +96,7 @@
         android:id="@+id/rvCounters"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

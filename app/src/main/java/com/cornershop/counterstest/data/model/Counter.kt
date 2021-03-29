@@ -9,5 +9,6 @@ import kotlinx.android.parcel.Parcelize
 data class Counter(
     @SerializedName("id") val id: String,
     @SerializedName("title") val title: String,
-    @SerializedName("count") val count: Int
+    @SerializedName("count") val count: Int,
+    @SerializedName("selected") var selected: Boolean
 ): Parcelable

@@ -3,6 +3,7 @@ package com.cornershop.counterstest.presentation.counters_list.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -22,15 +23,20 @@ import com.cornershop.counterstest.domain.usecases.counter.CounterUseCasesImpl
 import com.cornershop.counterstest.presentation.BaseActivity
 import com.cornershop.counterstest.presentation.counter_add.ui.CounterAddActivity
 import com.cornershop.counterstest.presentation.counters_list.adapter.CounterListAdapter
+import com.cornershop.counterstest.presentation.counters_list.adapter.ICounterList
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.CountersListViewModel
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.VMFactory
+import com.cornershop.counterstest.presentation.utils.extencion_functions.visible
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
+import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
+import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
 import com.cornershop.counterstest.utils.Resource
 
 
-class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
+class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICounterList {
 
-    override fun getViewBinding(): ActivityCountersListBinding = ActivityCountersListBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityCountersListBinding =
+        ActivityCountersListBinding.inflate(layoutInflater)
 
     private val viewModel by viewModels<CountersListViewModel> { VMFactory( CounterUseCasesImpl( CounterDataSourceImpl() ) ) }
     private val countersListAdapter: CounterListAdapter = CounterListAdapter()
@@ -71,7 +77,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
             }
         }
         //observe when another process altering the counters list ( refresh )
-        viewModel.counterListChange.observe(this){result ->
+        viewModel.counterListChange.observe(this) { result ->
             setLayoutInformation(result.data)
         }
     }
@@ -82,7 +88,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
     }
 
     private fun showLoading(loading: Boolean) {
-        if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.visibleOrGone(false)
+        if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.visibleOrGone(false )
     }
 
     private fun emptyLayout(isVisible: Boolean) {
@@ -93,16 +99,50 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
 
     private fun setCountersData(data: List<Counter>) {
         emptyLayout(false)
-        countersListAdapter.recyclerAdapter(data)
+        countersListAdapter.recyclerAdapter(data, this)
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
     }
 
+    override fun onItemClick(item: Counter, position: Int) {
+
+        Log.v("tamaño", "${countersListAdapter.getSelectedItems()}")
+        if (countersListAdapter.getSelectedItems() > 0) {
+            countersListAdapter.singleSelection(item, position)
+            binding.rvCounters.vibrateOnTouch()
+        }
+
+        if(countersListAdapter.getSelectedItems() == 0)
+            disableToolbar()
+    }
+
+    override fun onItemLongClick(item: Counter, position: Int) {
+        countersListAdapter.setSelected(item, position)
+        binding.rvCounters.vibrateOnTouch()
+        enableToolbar()
+    }
+
+    private fun enableToolbar(){
+        showToolbar()
+        binding.cardSeachView.visibleOrInvisible(false, animate = false)
+    }
+
+    private fun disableToolbar(){
+        hideToolbar()
+        binding.cardSeachView.visibleOrInvisible(true, animate = true)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> { hideToolbar(); true }
-            R.id.action_delete -> { Toast.makeText(this, "click on delete", Toast.LENGTH_LONG).show(); true  }
-            R.id.action_share -> { Toast.makeText(this, "click on share", Toast.LENGTH_LONG).show(); true }
+            android.R.id.home -> {
+                hideToolbar(); true
+            }
+            R.id.action_delete -> {
+                Toast.makeText(this, "click on delete", Toast.LENGTH_LONG).show(); true
+            }
+            R.id.action_share -> {
+                Toast.makeText(this, "click on share", Toast.LENGTH_LONG).show(); true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -117,13 +157,14 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
         startForAddCounterResult.launch(Intent(this, CounterAddActivity::class.java))
     }
 
-    private val startForAddCounterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data
-            intent?.let {
-                val counters = it.getParcelableArrayListExtra<Counter>("counters_list")!!
-                viewModel.changeCountersList(ArrayList(counters))
+    private val startForAddCounterResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                intent?.let {
+                    val counters = it.getParcelableArrayListExtra<Counter>("counters_list")!!
+                    viewModel.changeCountersList(ArrayList(counters))
+                }
             }
         }
-    }
 }
