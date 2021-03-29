@@ -4,36 +4,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.counter_add.CounterAddActivity">
+    tools:context=".presentation.counter_add.ui.CounterAddActivity">
 
 
     <ImageButton
         android:id="@+id/closeBtn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_margin="@dimen/margin_normal_1"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        android:onClick="closeScreenBtn"
         android:src="@drawable/ic_close"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/orange" />
 
-    <TextView
+    <Button
         android:id="@+id/saveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal_1"
+        android:background="@android:color/transparent"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="@font/roboto_medium"
+        android:onClick="saveCounterBtn"
         android:text="@string/save"
         android:textAllCaps="true"
         android:textColor="@color/orange"
-        android:textSize="17sp"
+        android:textSize="@dimen/normal_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/small_progress"
+        android:layout_height="@dimen/small_progress"
+        android:layout_margin="@dimen/margin_normal_1"
+        android:theme="@style/LoadingProgressBar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/saveBtn"
+        app:layout_constraintEnd_toEndOf="@id/saveBtn"
+        app:layout_constraintStart_toStartOf="@id/saveBtn"
+        app:layout_constraintTop_toTopOf="@id/saveBtn" />
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout"
@@ -49,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/closeBtn">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/textCounterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/counter_name_hint"

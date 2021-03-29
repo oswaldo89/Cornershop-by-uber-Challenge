@@ -8,5 +8,9 @@ class CounterUseCasesImpl(private val source: CounterDataSourceImpl): CounterUse
     override suspend fun getList(): Resource<List<Counter>> {
         return source.getList()
     }
+
+    override suspend fun addCounter(name : String): Resource<List<Counter>> {
+        return source.addCounter(name)
+    }
 }
 

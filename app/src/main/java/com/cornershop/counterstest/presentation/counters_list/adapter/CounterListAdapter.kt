@@ -10,20 +10,18 @@ import com.cornershop.counterstest.databinding.ItemCounterListBinding
 class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>() {
 
     private var items: List<Counter> = ArrayList()
-    private lateinit var context: Context
 
-    fun recyclerAdapter(items: List<Counter>, context: Context) {
+    fun recyclerAdapter(items: List<Counter>) {
         this.items = items
-        this.context = context
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item, context)
+        holder.bind(item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCounterListBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemCounterListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(
             binding
         )
@@ -34,7 +32,7 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
     }
 
     class ViewHolder(private val itemBinding: ItemCounterListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-        fun bind(item: Counter, context: Context) {
+        fun bind(item: Counter) {
             itemBinding.txtTitle.text = item.title
             itemBinding.txtCountNumber.text = "${item.count}"
         }

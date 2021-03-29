@@ -83,8 +83,8 @@
     <!-- loading -->
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/medium_progress"
+        android:layout_height="@dimen/medium_progress"
         android:theme="@style/LoadingProgressBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_normal_2"
-        android:onClick="addNewCounter"
+        android:onClick="addNewCounterBtn"
         android:padding="@dimen/normal_padding"
         android:text="@string/add_counters"
         android:textColor="@color/white"

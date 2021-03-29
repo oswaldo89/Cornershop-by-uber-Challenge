@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.presentation.utils
+package com.cornershop.counterstest.presentation.utils.extencion_functions
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -18,9 +18,27 @@ fun View.visible(animate: Boolean = true) {
     }
 }
 
+fun View.visibility(enable: Boolean) {
+    visibility = if (enable) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
+/** Set the View visibility to INVISIBLE and eventually animate view alpha till 0% */
+fun View.invisible(animate: Boolean = true) {
+    hide(View.INVISIBLE, animate)
+}
+
 /** Set the View visibility to GONE and eventually animate view alpha till 0% */
 fun View.gone(animate: Boolean = true) {
     hide(View.GONE, animate)
+}
+
+/** Convenient method that chooses between View.visible() or View.invisible() methods */
+fun View.visibleOrInvisible(show: Boolean, animate: Boolean = true) {
+    if (show) visible(animate) else invisible(animate)
 }
 
 /** Convenient method that chooses between View.visible() or View.gone() methods */

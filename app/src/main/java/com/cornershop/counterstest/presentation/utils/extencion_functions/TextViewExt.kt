@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.presentation.utils
+package com.cornershop.counterstest.presentation.utils.extencion_functions
 
 import android.text.*
 import android.text.method.LinkMovementMethod

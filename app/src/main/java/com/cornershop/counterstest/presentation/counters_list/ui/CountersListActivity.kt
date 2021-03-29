@@ -1,5 +1,6 @@
 package com.cornershop.counterstest.presentation.counters_list.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -7,6 +8,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,18 +20,17 @@ import com.cornershop.counterstest.data.repository.counter.CounterDataSourceImpl
 import com.cornershop.counterstest.databinding.ActivityCountersListBinding
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCasesImpl
 import com.cornershop.counterstest.presentation.BaseActivity
-import com.cornershop.counterstest.presentation.counter_add.CounterAddActivity
+import com.cornershop.counterstest.presentation.counter_add.ui.CounterAddActivity
 import com.cornershop.counterstest.presentation.counters_list.adapter.CounterListAdapter
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.CountersListViewModel
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.VMFactory
-import com.cornershop.counterstest.presentation.utils.visibleOrGone
+import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.utils.Resource
 
 
 class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
 
-    override fun getViewBinding(): ActivityCountersListBinding =
-        ActivityCountersListBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityCountersListBinding = ActivityCountersListBinding.inflate(layoutInflater)
 
     private val viewModel by viewModels<CountersListViewModel> { VMFactory( CounterUseCasesImpl( CounterDataSourceImpl() ) ) }
     private val countersListAdapter: CounterListAdapter = CounterListAdapter()
@@ -68,6 +70,10 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
                 is Resource.Failure -> showLoading(false)
             }
         }
+        //observe when another process altering the counters list ( refresh )
+        viewModel.counterListChange.observe(this){result ->
+            setLayoutInformation(result.data)
+        }
     }
 
     private fun setLayoutInformation(data: List<Counter>) {
@@ -87,7 +93,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
 
     private fun setCountersData(data: List<Counter>) {
         emptyLayout(false)
-        countersListAdapter.recyclerAdapter(data, this)
+        countersListAdapter.recyclerAdapter(data)
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
     }
@@ -107,10 +113,17 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>() {
         return true
     }
 
-    fun addNewCounter(view: View) {
-        Intent(this, CounterAddActivity::class.java).apply {
-            startActivity(this)
-        }
+    fun addNewCounterBtn(@Suppress("UNUSED_PARAMETER") view: View) {
+        startForAddCounterResult.launch(Intent(this, CounterAddActivity::class.java))
     }
 
+    private val startForAddCounterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            intent?.let {
+                val counters = it.getParcelableArrayListExtra<Counter>("counters_list")!!
+                viewModel.changeCountersList(ArrayList(counters))
+            }
+        }
+    }
 }
