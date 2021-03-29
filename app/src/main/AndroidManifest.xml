@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cornershop.counterstest">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="false"
@@ -9,12 +12,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CountersNormal">
+        android:theme="@style/Theme.CountersNormal"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
         <activity
-            android:name=".presentation.new_counter.NewCounterActivity"
+            android:name=".presentation.counter_add.CounterAddActivity"
             android:theme="@style/Theme.CountersWelcome" />
         <activity
-            android:name=".presentation.home.HomeActivity"
+            android:name=".presentation.counters_list.ui.CountersListActivity"
             android:theme="@style/Theme.CountersWelcome" />
         <activity
             android:name=".presentation.welcome.WelcomeActivity"

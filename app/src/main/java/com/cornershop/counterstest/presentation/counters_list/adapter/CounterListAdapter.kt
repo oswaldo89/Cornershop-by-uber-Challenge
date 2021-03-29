@@ -1,4 +1,4 @@
-package com.cornershop.counterstest.presentation.home
+package com.cornershop.counterstest.presentation.counters_list.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -24,7 +24,9 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCounterListBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding)
+        return ViewHolder(
+            binding
+        )
     }
 
     override fun getItemCount(): Int {

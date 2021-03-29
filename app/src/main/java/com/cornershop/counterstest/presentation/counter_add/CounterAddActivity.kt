@@ -1,20 +1,19 @@
-package com.cornershop.counterstest.presentation.new_counter
+package com.cornershop.counterstest.presentation.counter_add
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.cornershop.counterstest.R
-import com.cornershop.counterstest.databinding.ActivityNewCounterBinding
+import com.cornershop.counterstest.databinding.ActivityCounterAddBinding
 import com.cornershop.counterstest.presentation.utils.makeLinks
 
-class NewCounterActivity : AppCompatActivity() {
+class CounterAddActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityNewCounterBinding
+    lateinit var binding: ActivityCounterAddBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityNewCounterBinding.inflate(layoutInflater)
+        binding = ActivityCounterAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.textExamples.makeLinks(
