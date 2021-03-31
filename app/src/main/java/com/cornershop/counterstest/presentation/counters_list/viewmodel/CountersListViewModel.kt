@@ -1,6 +1,5 @@
 package com.cornershop.counterstest.presentation.counters_list.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -9,10 +8,6 @@ import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Resource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
 
 
 class CountersListViewModel(private val repo: CounterUseCases) : ViewModel() {
