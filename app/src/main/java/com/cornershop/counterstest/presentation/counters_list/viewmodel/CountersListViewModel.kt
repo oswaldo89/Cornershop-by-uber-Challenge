@@ -1,5 +1,6 @@
 package com.cornershop.counterstest.presentation.counters_list.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -8,6 +9,10 @@ import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 
 
 class CountersListViewModel(private val repo: CounterUseCases) : ViewModel() {
@@ -42,7 +47,16 @@ class CountersListViewModel(private val repo: CounterUseCases) : ViewModel() {
         liveData(Dispatchers.IO) {
             emit(Resource.Loading())
             try {
-               list.map { emit(repo.deleteCounter(it.id)) }
+
+                if(list.size == 1){
+                    emit(repo.deleteCounter(list.first().id))
+                }else{
+                    list.mapIndexed { index, counter ->
+                        repo.deleteCounter(counter.id)
+                        if(list.size == index + 1)  emit(repo.deleteCounter(counter.id))
+                    }
+                }
+
             } catch (e: Exception) {
                 emit(Resource.Failure(e.message ?: "Unknown Error", e))
             }

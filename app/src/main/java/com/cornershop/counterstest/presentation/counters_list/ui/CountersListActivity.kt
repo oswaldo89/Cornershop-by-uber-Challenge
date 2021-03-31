@@ -101,6 +101,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         binding.textNumberItems.visibleOrGone(!isVisible)
         binding.textNumberTimes.visibleOrGone(!isVisible)
         binding.emptyLayout.content.visibleOrGone(isVisible)
+        binding.rvCounters.visibleOrGone(!isVisible)
     }
 
     private fun setCountersData(data: List<Counter>) {

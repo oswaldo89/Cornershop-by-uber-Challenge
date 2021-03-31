@@ -21,7 +21,7 @@ class CounterAddViewModel(private val repo: CounterUseCases) : ViewModel() {
         liveData(Dispatchers.IO) {
             emit(Resource.Loading())
             try {
-                delay(TimeUnit.SECONDS.toMillis(2)) //simulate slow server.
+                delay(TimeUnit.SECONDS.toMillis(1)) //simulate slow server.
                 emit(repo.addCounter(name))
             } catch (e: Exception) {
                 emit(Resource.Failure(e.message ?: "Unknown Error", e))
