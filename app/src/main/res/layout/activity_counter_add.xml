@@ -21,12 +21,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/orange" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:id="@+id/saveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal_1"
-        android:background="@android:color/transparent"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="@font/roboto_medium"

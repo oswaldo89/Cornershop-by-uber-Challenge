@@ -96,10 +96,10 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/txtCountNumber"
-        app:layout_constraintEnd_toEndOf="@+id/txtCountNumber"
-        app:layout_constraintStart_toStartOf="@+id/txtCountNumber"
-        app:layout_constraintTop_toTopOf="@+id/txtCountNumber" />
+        app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
+        app:layout_constraintEnd_toEndOf="@+id/increaseBtn"
+        app:layout_constraintStart_toStartOf="@+id/increaseBtn"
+        app:layout_constraintTop_toTopOf="@+id/increaseBtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

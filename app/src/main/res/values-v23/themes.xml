@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.CountersNormal" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+    <style name="Theme.CountersNormal" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorOnPrimary">@color/black</item>
@@ -26,7 +26,7 @@
         <item name="colorAccent">@color/orange</item>
     </style>
 
-    <style name="ToolbarMenu">
+    <style name="ToolbarMenu" parent="Theme.CountersNormal">
         <item name="android:background">@color/white</item>
     </style>
 

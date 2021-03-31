@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CountersNormal" parent="Theme.MaterialComponents.DayNight">
+    <style name="Theme.CountersNormal" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorOnPrimary">@color/black</item>
@@ -24,7 +24,7 @@
         <item name="colorAccent">@color/orange</item>
     </style>
 
-    <style name="ToolbarMenu">
+    <style name="ToolbarMenu" parent="Theme.CountersNormal">
         <item name="android:background">@color/white</item>
     </style>
 

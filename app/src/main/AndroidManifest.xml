@@ -17,11 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name=".presentation.counter_add.ui.CounterAddActivity"
-            android:theme="@style/Theme.CountersWelcome" />
+            android:name=".presentation.counter_add.ui.CounterAddActivity" />
         <activity
-            android:name=".presentation.counters_list.ui.CountersListActivity"
-            android:theme="@style/Theme.CountersWelcome" />
+            android:name=".presentation.counters_list.ui.CountersListActivity" />
         <activity
             android:name=".presentation.welcome.WelcomeActivity"
             android:theme="@style/Theme.CountersWelcome">

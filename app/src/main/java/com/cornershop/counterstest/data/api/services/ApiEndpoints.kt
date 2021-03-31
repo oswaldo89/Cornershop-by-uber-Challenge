@@ -1,10 +1,9 @@
 package com.cornershop.counterstest.data.api.services
 
-import com.cornershop.counterstest.data.api.request.AddCounterRequest
+import com.cornershop.counterstest.data.api.request.IdCounterRequest
+import com.cornershop.counterstest.data.api.request.TitleCounterRequest
 import com.cornershop.counterstest.data.model.Counter
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiEndpoints {
 
@@ -12,5 +11,8 @@ interface ApiEndpoints {
     suspend fun getList(): List<Counter>
 
     @POST("counter")
-    suspend fun addCounter(@Body body: AddCounterRequest): List<Counter>
+    suspend fun addCounter(@Body body: TitleCounterRequest): List<Counter>
+
+    @HTTP(method = "DELETE", path = "counter", hasBody = true)
+    suspend fun deleteCounter(@Body body: IdCounterRequest): List<Counter>
 }

@@ -10,33 +10,44 @@ import com.cornershop.counterstest.presentation.utils.extencion_functions.visibl
 
 class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>() {
 
-    private var items: List<Counter> = ArrayList()
+    private var counters: List<Counter> = ArrayList()
     private lateinit var iCounterList: ICounterList
 
-    fun recyclerAdapter(items: List<Counter>, iCounterList: ICounterList) {
-        this.items = items
+    fun recyclerAdapter(counters: List<Counter>, iCounterList: ICounterList) {
+        this.counters = counters
         this.iCounterList = iCounterList
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
+        val item = counters[position]
         holder.bind(item, iCounterList, position)
     }
 
-    fun getSelectedItems() =  items.filter { it.selected }.size
+    fun getSelectedCounters() : List<Counter>{
+        return counters.filter { it.selected }
+    }
+
+    fun getTotalSelectedCounters() =  counters.filter { it.selected }.size
+
+    override fun getItemCount(): Int = counters.size
+
+    fun disableAllSelections(){
+        counters.map {  it.selected = false }
+        notifyDataSetChanged()
+    }
 
     fun singleSelection( item: Counter, position: Int){
-        if(getSelectedItems() > 0){
-            changeItemState(item,position)
+        if(getTotalSelectedCounters() > 0){
+            changeCounterState(item,position)
         }
     }
 
     fun setSelected(item: Counter, position: Int){
-        changeItemState(item,position)
+        changeCounterState(item,position)
     }
 
-    private fun changeItemState(item: Counter, position: Int){
-        val it = items.find { it.title == item.title }
+    private fun changeCounterState(item: Counter, position: Int){
+        val it = counters.find { it.title == item.title }
         it?.let {
             it.selected = !it.selected
             notifyItemChanged(position)
@@ -48,10 +59,6 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
         return ViewHolder(
             binding
         )
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
     }
 
     class ViewHolder(private val itemBinding: ItemCounterListBinding) : RecyclerView.ViewHolder(itemBinding.root) {

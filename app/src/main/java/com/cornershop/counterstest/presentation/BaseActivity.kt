@@ -19,8 +19,11 @@ abstract class BaseActivity<B : ViewBinding> : AppCompatActivity() {
             it.hide()
             it.setHomeAsUpIndicator(R.drawable.ic_close)
             it.setDisplayHomeAsUpEnabled(true)
-            it.setDisplayShowTitleEnabled(false)
         }
+    }
+
+    fun changeTitleToolbar(numberOfItemsSelected : Int){
+        supportActionBar?.title = String.format(getString(R.string.n_selected), numberOfItemsSelected)
     }
 
     fun showToolbar() {

@@ -3,7 +3,6 @@ package com.cornershop.counterstest.presentation.counters_list.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -26,7 +25,6 @@ import com.cornershop.counterstest.presentation.counters_list.adapter.CounterLis
 import com.cornershop.counterstest.presentation.counters_list.adapter.ICounterList
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.CountersListViewModel
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.VMFactory
-import com.cornershop.counterstest.presentation.utils.extencion_functions.visible
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
 import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
@@ -35,8 +33,7 @@ import com.cornershop.counterstest.utils.Resource
 
 class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICounterList {
 
-    override fun getViewBinding(): ActivityCountersListBinding =
-        ActivityCountersListBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityCountersListBinding = ActivityCountersListBinding.inflate(layoutInflater)
 
     private val viewModel by viewModels<CountersListViewModel> { VMFactory( CounterUseCasesImpl( CounterDataSourceImpl() ) ) }
     private val countersListAdapter: CounterListAdapter = CounterListAdapter()
@@ -80,51 +77,51 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         viewModel.counterListChange.observe(this) { result ->
             setLayoutInformation(result.data)
         }
+        //when deleting any counters
+        viewModel.observeDeletedItems.observe(this) { result ->
+            when (result) {
+                is Resource.Loading -> showLoading(true)
+                is Resource.Success -> setLayoutInformation(result.data)
+                is Resource.Failure -> showLoading(false)
+            }
+        }
     }
 
     private fun setLayoutInformation(data: List<Counter>) {
         showLoading(false)
-        if (data.isNotEmpty()) setCountersData(data) else emptyLayout(true)
+        initialState()
+        if (data.isNotEmpty()) setCountersData(data) else showEmptyLayout(true)
     }
 
     private fun showLoading(loading: Boolean) {
         if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.visibleOrGone(false )
     }
 
-    private fun emptyLayout(isVisible: Boolean) {
+    private fun showEmptyLayout(isVisible: Boolean) {
         binding.textNumberItems.visibleOrGone(!isVisible)
         binding.textNumberTimes.visibleOrGone(!isVisible)
         binding.emptyLayout.content.visibleOrGone(isVisible)
     }
 
     private fun setCountersData(data: List<Counter>) {
-        emptyLayout(false)
+        showEmptyLayout(false)
         countersListAdapter.recyclerAdapter(data, this)
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
     }
 
-    override fun onItemClick(item: Counter, position: Int) {
-
-        Log.v("tamaño", "${countersListAdapter.getSelectedItems()}")
-        if (countersListAdapter.getSelectedItems() > 0) {
-            countersListAdapter.singleSelection(item, position)
-            binding.rvCounters.vibrateOnTouch()
-        }
-
-        if(countersListAdapter.getSelectedItems() == 0)
-            disableToolbar()
+    private fun initialState(){
+        countersListAdapter.disableAllSelections()
+        disableToolbar()
     }
 
-    override fun onItemLongClick(item: Counter, position: Int) {
-        countersListAdapter.setSelected(item, position)
-        binding.rvCounters.vibrateOnTouch()
-        enableToolbar()
-    }
-
-    private fun enableToolbar(){
+    private fun enableAndUpdateToolbar(){
         showToolbar()
         binding.cardSeachView.visibleOrInvisible(false, animate = false)
+
+        //update title description.
+        val selectedCount = countersListAdapter.getTotalSelectedCounters()
+        changeTitleToolbar(selectedCount)
     }
 
     private fun disableToolbar(){
@@ -132,19 +129,56 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         binding.cardSeachView.visibleOrInvisible(true, animate = true)
     }
 
+    override fun onItemClick(item: Counter, position: Int) {
+
+        if (countersListAdapter.getTotalSelectedCounters() > 0) {
+            countersListAdapter.singleSelection(item, position)
+            binding.rvCounters.vibrateOnTouch()
+        }
+
+        if(countersListAdapter.getTotalSelectedCounters() == 0)
+            disableToolbar()
+
+        enableAndUpdateToolbar()
+    }
+
+    override fun onItemLongClick(item: Counter, position: Int) {
+        countersListAdapter.setSelected(item, position)
+        binding.rvCounters.vibrateOnTouch()
+        enableAndUpdateToolbar()
+    }
+
+    override fun onBackPressed() {
+        if(countersListAdapter.getTotalSelectedCounters() > 0){
+            initialState()
+        }else{
+            super.onBackPressed()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(countersListAdapter.getTotalSelectedCounters() > 0){
+            enableAndUpdateToolbar()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                hideToolbar(); true
+                initialState(); true
             }
-            R.id.action_delete -> {
-                Toast.makeText(this, "click on delete", Toast.LENGTH_LONG).show(); true
-            }
+            R.id.action_delete -> { deleteCounters(); true }
             R.id.action_share -> {
                 Toast.makeText(this, "click on share", Toast.LENGTH_LONG).show(); true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun deleteCounters(){
+        val countersSelected = countersListAdapter.getSelectedCounters()
+        viewModel.deleteCountersList(ArrayList(countersSelected))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -157,11 +191,11 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         startForAddCounterResult.launch(Intent(this, CounterAddActivity::class.java))
     }
 
-    private val startForAddCounterResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+    private val startForAddCounterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent = result.data
                 intent?.let {
+                    initialState()
                     val counters = it.getParcelableArrayListExtra<Counter>("counters_list")!!
                     viewModel.changeCountersList(ArrayList(counters))
                 }
