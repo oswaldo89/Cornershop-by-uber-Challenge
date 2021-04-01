@@ -16,26 +16,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cornershop.counterstest.R
 import com.cornershop.counterstest.data.model.Counter
-import com.cornershop.counterstest.data.repository.counter.CounterDataSourceImpl
 import com.cornershop.counterstest.databinding.ActivityCountersListBinding
-import com.cornershop.counterstest.domain.usecases.counter.CounterUseCasesImpl
 import com.cornershop.counterstest.presentation.BaseActivity
 import com.cornershop.counterstest.presentation.counter_add.ui.CounterAddActivity
 import com.cornershop.counterstest.presentation.counters_list.adapter.CounterListAdapter
 import com.cornershop.counterstest.presentation.counters_list.adapter.ICounterList
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.CountersListViewModel
-import com.cornershop.counterstest.presentation.counters_list.viewmodel.VMFactory
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
 import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
 import com.cornershop.counterstest.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICounterList {
 
     override fun getViewBinding(): ActivityCountersListBinding = ActivityCountersListBinding.inflate(layoutInflater)
 
-    private val viewModel by viewModels<CountersListViewModel> { VMFactory( CounterUseCasesImpl( CounterDataSourceImpl() ) ) }
+    private val viewModel by viewModels<CountersListViewModel>()
     private val countersListAdapter: CounterListAdapter = CounterListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +100,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         binding.textNumberItems.visibleOrGone(!isVisible)
         binding.textNumberTimes.visibleOrGone(!isVisible)
         binding.emptyLayout.content.visibleOrGone(isVisible)
-        binding.rvCounters.visibleOrGone(!isVisible)
+        binding.rvCounters.visibleOrGone(!isVisible,false)
     }
 
     private fun setCountersData(data: List<Counter>) {

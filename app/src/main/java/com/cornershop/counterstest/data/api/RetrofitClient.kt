@@ -17,7 +17,7 @@ object RetrofitClient {
             .build()
 
         Retrofit.Builder()
-            .baseUrl("http://d969a5cbe6f0.ngrok.io/api/v1/")
+            .baseUrl("http://4c78d53e8b79.ngrok.io/api/v1/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build().create(ApiEndpoints::class.java)

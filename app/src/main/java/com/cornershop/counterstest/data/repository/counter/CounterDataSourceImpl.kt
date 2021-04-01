@@ -4,10 +4,10 @@ import com.cornershop.counterstest.data.api.RetrofitClient
 import com.cornershop.counterstest.data.api.request.IdCounterRequest
 import com.cornershop.counterstest.data.api.request.TitleCounterRequest
 import com.cornershop.counterstest.data.model.Counter
-import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Resource
+import javax.inject.Inject
 
-class CounterDataSourceImpl : CounterUseCases {
+class CounterDataSourceImpl @Inject constructor(): CounterDataSource {
     override suspend fun getList(): Resource<List<Counter>> {
         return Resource.Success(RetrofitClient.webservice.getList())
     }

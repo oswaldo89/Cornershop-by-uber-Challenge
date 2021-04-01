@@ -7,10 +7,12 @@ import androidx.lifecycle.switchMap
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
-
-class CountersListViewModel(private val repo: CounterUseCases) : ViewModel() {
+@HiltViewModel
+class CountersListViewModel @Inject constructor(private val repo: CounterUseCases) : ViewModel() {
 
     private val mutableCounterList = MutableLiveData<ArrayList<Counter>>()
     private val mutableCountersDeletedList = MutableLiveData<ArrayList<Counter>>()
@@ -43,13 +45,9 @@ class CountersListViewModel(private val repo: CounterUseCases) : ViewModel() {
             emit(Resource.Loading())
             try {
 
-                if(list.size == 1){
-                    emit(repo.deleteCounter(list.first().id))
-                }else{
-                    list.mapIndexed { index, counter ->
-                        repo.deleteCounter(counter.id)
-                        if(list.size == index + 1)  emit(repo.deleteCounter(counter.id))
-                    }
+                list.mapIndexed { index, counter ->
+                    repo.deleteCounter(counter.id)
+                    if(list.size == index + 1)  emit(repo.deleteCounter(counter.id))
                 }
 
             } catch (e: Exception) {

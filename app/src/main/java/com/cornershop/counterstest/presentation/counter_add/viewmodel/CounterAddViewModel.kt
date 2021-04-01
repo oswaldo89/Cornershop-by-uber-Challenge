@@ -6,11 +6,14 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class CounterAddViewModel(private val repo: CounterUseCases) : ViewModel() {
+@HiltViewModel
+class CounterAddViewModel @Inject constructor(private val repo: CounterUseCases) : ViewModel() {
     private val counterName = MutableLiveData<String>()
 
     fun addCounter(name: String){
