@@ -3,6 +3,7 @@ package com.cornershop.counterstest.presentation.counters_list.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -22,11 +23,14 @@ import com.cornershop.counterstest.presentation.counter_add.ui.CounterAddActivit
 import com.cornershop.counterstest.presentation.counters_list.adapter.CounterListAdapter
 import com.cornershop.counterstest.presentation.counters_list.adapter.ICounterList
 import com.cornershop.counterstest.presentation.counters_list.viewmodel.CountersListViewModel
+import com.cornershop.counterstest.presentation.dialogs.ErrorDialog
+import com.cornershop.counterstest.presentation.utils.extencion_functions.gone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
 import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
 import com.cornershop.counterstest.utils.Constants
 import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.States
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -44,6 +48,8 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
 
         setupRecyclerView()
         setupObserveCountersList()
+
+        viewModel.attempGetData(States.INITIAL)
     }
 
     private fun setupRecyclerView() {
@@ -70,7 +76,8 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
             when (result) {
                 is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> showLoading(false)
+                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
+                is Resource.NetworkError -> {showLoading(false); networkErrorLayout()}
             }
         }
         //observe when another process altering the counters list ( refresh )
@@ -82,7 +89,8 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
             when (result) {
                 is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> showLoading(false)
+                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
+                is Resource.NetworkError -> {showLoading(false);  showError(getString(R.string.connection_error_description)) }
             }
         }
         //observe when counter is modifing
@@ -90,9 +98,18 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
             when (result) {
                 is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> showLoading(false)
+                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
+                is Resource.NetworkError -> {showLoading(false); showError(getString(R.string.connection_error_description))}
             }
         }
+    }
+
+    private fun showError(errorMessage: String?) {
+        ErrorDialog(errorMessage).show(supportFragmentManager, "ErrorDialogFragment")
+    }
+
+    private fun networkErrorLayout() {
+        binding.networkLayout.content.visibleOrGone(true)
     }
 
     private fun setLayoutInformation(data: List<Counter>) {
@@ -102,7 +119,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     private fun showLoading(loading: Boolean) {
-        if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.visibleOrGone(false )
+        if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.gone(false )
     }
 
     private fun showEmptyLayout(isVisible: Boolean) {
@@ -113,6 +130,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     private fun setCountersData(data: List<Counter>) {
+        binding.networkLayout.content.visibleOrGone(false)
         showEmptyLayout(false)
         countersListAdapter.recyclerAdapter(data, this)
         binding.rvCounters.adapter = countersListAdapter
@@ -207,6 +225,10 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
 
     fun addNewCounterBtn(@Suppress("UNUSED_PARAMETER") view: View) {
         startForAddCounterResult.launch(Intent(this, CounterAddActivity::class.java))
+    }
+
+    fun retryBtn(@Suppress("UNUSED_PARAMETER") view: View) {
+        viewModel.attempGetData(States.RETRY)
     }
 
     private val startForAddCounterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->

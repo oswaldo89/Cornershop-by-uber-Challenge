@@ -17,6 +17,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- counters list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCounters"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_normal_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNumberItems" />
+
+    <!-- network layout -->
+    <include
+        android:id="@+id/networkLayout"
+        layout="@layout/layout_error_network"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardSeachView" />
+
     <!-- empty layout -->
     <include
         android:id="@+id/emptyLayout"
@@ -28,6 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardSeachView" />
+
 
     <!-- inside the cardview are defined the searchview -->
     <androidx.cardview.widget.CardView
@@ -91,17 +116,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- counters list -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCounters"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_normal_1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textNumberItems" />
+
 
     <!-- new counter buton -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

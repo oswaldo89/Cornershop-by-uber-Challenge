@@ -9,6 +9,7 @@ import com.cornershop.counterstest.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -24,10 +25,17 @@ class CounterAddViewModel @Inject constructor(private val repo: CounterUseCases)
         liveData(Dispatchers.IO) {
             emit(Resource.Loading())
             try {
-                delay(TimeUnit.SECONDS.toMillis(1)) //simulate slow server.
                 emit(repo.addCounter(name))
-            } catch (e: Exception) {
-                emit(Resource.Failure(e.message ?: "Unknown Error", e))
+            }catch (e: Throwable) {
+                delay(TimeUnit.SECONDS.toMillis(1))
+                when (e) {
+                    is UnknownHostException -> {
+                        emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
+                    }
+                    else -> {
+                        emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                    }
+                }
             }
         }
     }

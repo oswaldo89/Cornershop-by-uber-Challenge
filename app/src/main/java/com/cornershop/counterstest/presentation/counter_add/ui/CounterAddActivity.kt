@@ -7,9 +7,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
+import com.cornershop.counterstest.R
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.databinding.ActivityCounterAddBinding
 import com.cornershop.counterstest.presentation.counter_add.viewmodel.CounterAddViewModel
+import com.cornershop.counterstest.presentation.dialogs.ErrorDialog
 import com.cornershop.counterstest.presentation.utils.closeKeyboard
 import com.cornershop.counterstest.presentation.utils.extencion_functions.makeLinks
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
@@ -42,9 +44,16 @@ class CounterAddActivity : AppCompatActivity() {
             when (result) {
                 is Resource.Loading -> saving()
                 is Resource.Success -> addCounterSuccess(result.data)
-                is Resource.Failure -> finish()
+                is Resource.Failure -> showError(result.errorMessage)
+                is Resource.NetworkError -> showError(getString(R.string.connection_error_description))
             }
         }
+    }
+
+    private fun showError(errorMessage: String?) {
+        ErrorDialog(errorMessage).show(supportFragmentManager, "ErrorDialogFragment")
+        binding.saveBtn.visibleOrInvisible(true, animate = false)
+        binding.progressBar.visibleOrGone(false)
     }
 
     private fun addCounterSuccess(data: List<Counter>) {

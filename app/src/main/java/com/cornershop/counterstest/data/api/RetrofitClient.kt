@@ -1,5 +1,6 @@
 package com.cornershop.counterstest.data.api
 
+import com.cornershop.counterstest.BuildConfig
 import com.cornershop.counterstest.data.api.services.ApiEndpoints
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -17,7 +18,7 @@ object RetrofitClient {
             .build()
 
         Retrofit.Builder()
-            .baseUrl("http://4c78d53e8b79.ngrok.io/api/v1/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build().create(ApiEndpoints::class.java)
