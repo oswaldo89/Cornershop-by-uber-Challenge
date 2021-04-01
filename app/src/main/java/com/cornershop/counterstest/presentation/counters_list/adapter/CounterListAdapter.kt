@@ -7,36 +7,72 @@ import com.cornershop.counterstest.R
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.databinding.ItemCounterListBinding
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
+import android.widget.Filter
+import android.widget.Filterable
+import java.util.*
+import kotlin.collections.ArrayList
 
-class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>() {
+class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>(), Filterable {
 
+    private var countersFilterList = ArrayList<Counter>()
     private var counters: List<Counter> = ArrayList()
     private lateinit var iCounterList: ICounterList
+
+
 
     fun recyclerAdapter(counters: List<Counter>, iCounterList: ICounterList) {
         this.counters = counters
         this.iCounterList = iCounterList
+        this.countersFilterList = ArrayList(counters)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = counters[position]
+        val item = countersFilterList[position]
         holder.bind(item, iCounterList, position)
     }
 
-    fun getSelectedCounters() : List<Counter>{
-        return counters.filter { it.selected }
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                countersFilterList = if (charSearch.isEmpty()) {
+                    ArrayList(counters)
+                } else {
+                    val resultList = ArrayList<Counter>()
+                    for (row in counters) {
+                        if (row.title.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(Locale.ROOT))) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = countersFilterList
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                countersFilterList = results?.values as ArrayList<Counter>
+                notifyDataSetChanged()
+            }
+        }
     }
 
-    fun getTotalSelectedCounters() =  counters.filter { it.selected }.size
+    fun getSelectedCounters() : List<Counter>{
+        return countersFilterList.filter { it.selected }
+    }
 
-    override fun getItemCount(): Int = counters.size
+    fun getTotalSelectedCounters() =  countersFilterList.filter { it.selected }.size
+
+    override fun getItemCount(): Int = countersFilterList.size
 
     fun getTimesCounters() : Int{
-        return counters.map { it.count }.sum()
+        return countersFilterList.map { it.count }.sum()
     }
 
     fun disableAllSelections(){
-        counters.map {  it.selected = false }
+        countersFilterList.map {  it.selected = false }
         notifyDataSetChanged()
     }
 
@@ -51,7 +87,7 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
     }
 
     private fun changeCounterState(item: Counter, position: Int){
-        val it = counters.find { it.title == item.title }
+        val it = countersFilterList.find { it.title == item.title }
         it?.let {
             it.selected = !it.selected
             notifyItemChanged(position)

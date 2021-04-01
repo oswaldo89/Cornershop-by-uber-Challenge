@@ -28,4 +28,18 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="EditText" parent="Theme.CountersNormal">
+        <item name="colorControlNormal">@color/orange</item>
+        <item name="colorControlActivated">@color/orange</item>
+        <item name="colorControlHighlight">@color/orange</item>
+    </style>
+
+    <style name="TextLabel" parent="Theme.CountersNormal">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/orange</item>
+        <item name="colorAccent">@color/orange</item>
+        <item name="colorControlNormal">@color/orange</item>
+        <item name="colorControlActivated">@color/orange</item>
+    </style>
+
 </resources>

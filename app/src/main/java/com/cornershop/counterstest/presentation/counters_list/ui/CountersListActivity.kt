@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,8 +49,21 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
 
         setupRecyclerView()
         setupObserveCountersList()
+        setupFilterList()
 
         viewModel.attempGetData(States.INITIAL)
+    }
+
+    private fun setupFilterList() {
+        binding.inputSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                countersListAdapter.filter.filter(newText)
+                return false
+            }
+        })
     }
 
     private fun setupRecyclerView() {
