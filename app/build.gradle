@@ -7,6 +7,13 @@ plugins {
 }
 
 android {
+    flavorDimensions "api"
+
+    productFlavors {
+        develop {
+            buildConfigField "String", "BASE_URL", "\"http://e37c2b87b0f7.ngrok.io/api/v1/\""
+        }
+    }
 
     buildFeatures {
        viewBinding true
