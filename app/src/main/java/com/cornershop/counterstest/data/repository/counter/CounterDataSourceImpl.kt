@@ -20,15 +20,13 @@ class CounterDataSourceImpl @Inject constructor(): CounterDataSource {
         return Resource.Success(RetrofitClient.webservice.deleteCounter(IdCounterRequest(id)))
     }
 
-    /*
-
-    override suspend fun increaseCounter(): Resource<CountersResponse> {
-
+    override suspend fun increaseCounter(id : String): Resource<List<Counter>> {
+        return Resource.Success(RetrofitClient.webservice.incCounter(IdCounterRequest(id)))
     }
 
-    override suspend fun decreaseCounter(): Resource<CountersResponse> {
-
-    }*/
+    override suspend fun decreaseCounter(id : String): Resource<List<Counter>> {
+        return Resource.Success(RetrofitClient.webservice.decCounter(IdCounterRequest(id)))
+    }
 
 
 }

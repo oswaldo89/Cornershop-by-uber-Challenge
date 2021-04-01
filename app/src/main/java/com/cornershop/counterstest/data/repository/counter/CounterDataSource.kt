@@ -5,6 +5,8 @@ import com.cornershop.counterstest.utils.Resource
 
 interface CounterDataSource {
     suspend fun getList(): Resource<List<Counter>>
-    suspend fun addCounter(title : String): Resource<List<Counter>>
-    suspend fun deleteCounter(id : String): Resource<List<Counter>>
+    suspend fun addCounter(title: String): Resource<List<Counter>>
+    suspend fun deleteCounter(id: String): Resource<List<Counter>>
+    suspend fun increaseCounter(id : String) : Resource<List<Counter>>
+    suspend fun decreaseCounter(id : String) : Resource<List<Counter>>
 }

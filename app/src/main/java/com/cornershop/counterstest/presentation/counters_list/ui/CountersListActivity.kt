@@ -25,6 +25,7 @@ import com.cornershop.counterstest.presentation.counters_list.viewmodel.Counters
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
 import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
+import com.cornershop.counterstest.utils.Constants
 import com.cornershop.counterstest.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -84,6 +85,14 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
                 is Resource.Failure -> showLoading(false)
             }
         }
+        //observe when counter is modifing
+        viewModel.observeCounterModification.observe(this) { result ->
+            when (result) {
+                is Resource.Loading -> showLoading(true)
+                is Resource.Success -> setLayoutInformation(result.data)
+                is Resource.Failure -> showLoading(false)
+            }
+        }
     }
 
     private fun setLayoutInformation(data: List<Counter>) {
@@ -108,6 +117,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         countersListAdapter.recyclerAdapter(data, this)
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
+        binding.textNumberTimes.text = String.format(getString(R.string.n_times), countersListAdapter.getTimesCounters())
     }
 
     private fun initialState(){
@@ -146,6 +156,14 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         countersListAdapter.setSelected(item, position)
         binding.rvCounters.vibrateOnTouch()
         enableAndUpdateToolbar()
+    }
+
+    override fun onIncreaseClick(item: Counter) {
+        viewModel.modificationCounter(item, Constants.INCREASE)
+    }
+
+    override fun onDecreaseClick(item: Counter) {
+        viewModel.modificationCounter(item, Constants.DECREASE)
     }
 
     override fun onBackPressed() {

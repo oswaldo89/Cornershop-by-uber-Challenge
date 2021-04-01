@@ -17,5 +17,13 @@ class CounterUseCasesImpl @Inject constructor(private val source: CounterDataSou
     override suspend fun deleteCounter(id : String): Resource<List<Counter>> {
         return source.deleteCounter(id)
     }
+
+    override suspend fun increaseCounter(id : String): Resource<List<Counter>> {
+        return source.increaseCounter(id)
+    }
+
+    override suspend fun decreaseCounter(id : String): Resource<List<Counter>> {
+        return source.decreaseCounter(id)
+    }
 }
 

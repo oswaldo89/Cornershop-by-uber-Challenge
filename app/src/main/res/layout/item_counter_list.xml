@@ -46,9 +46,9 @@
 
     <ImageButton
         android:id="@+id/decreaseBtn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="3dp"
+        android:scaleType="centerInside"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
@@ -73,8 +73,9 @@
 
     <ImageButton
         android:id="@+id/increaseBtn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:scaleType="center"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="3dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
@@ -93,7 +94,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"

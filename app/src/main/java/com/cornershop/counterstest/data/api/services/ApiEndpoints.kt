@@ -15,4 +15,10 @@ interface ApiEndpoints {
 
     @HTTP(method = "DELETE", path = "counter", hasBody = true)
     suspend fun deleteCounter(@Body body: IdCounterRequest): List<Counter>
+
+    @POST("counter/inc")
+    suspend fun incCounter(@Body body: IdCounterRequest): List<Counter>
+
+    @POST("counter/dec")
+    suspend fun decCounter(@Body body: IdCounterRequest): List<Counter>
 }

@@ -31,6 +31,10 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
 
     override fun getItemCount(): Int = counters.size
 
+    fun getTimesCounters() : Int{
+        return counters.map { it.count }.sum()
+    }
+
     fun disableAllSelections(){
         counters.map {  it.selected = false }
         notifyDataSetChanged()
@@ -83,6 +87,13 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.ViewHolder>()
             itemBinding.itemContent.setOnLongClickListener {
                 iCounterList.onItemLongClick(item,position)
                 true
+            }
+
+            itemBinding.increaseBtn.setOnClickListener {
+                iCounterList.onIncreaseClick(item)
+            }
+            itemBinding.decreaseBtn.setOnClickListener {
+                iCounterList.onDecreaseClick(item)
             }
         }
     }
