@@ -1,6 +1,6 @@
 # cornershop-challenge
 
-### architecture mvvm
+### architecture mvvm ( model-view-viewmodel) with clean
 <img src="github_assets/Screenshot_2.png" height="540">
 <img src="github_assets/mvvm.png" height="540">
 
