@@ -1,10 +1,5 @@
 package com.cornershop.counterstest.data.repository
 
-import com.cornershop.counterstest.utils.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.lang.Exception
 /*
 abstract class BaseRepository {
 

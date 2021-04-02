@@ -2,7 +2,7 @@ package com.cornershop.counterstest.domain.usecases.counter
 
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.data.repository.counter.CounterDataSourceImpl
-import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import javax.inject.Inject
 
 class CounterUseCasesImpl @Inject constructor(private val source: CounterDataSourceImpl): CounterUseCases{

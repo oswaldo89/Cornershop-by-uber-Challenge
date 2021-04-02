@@ -1,17 +1,18 @@
 package com.cornershop.counterstest.presentation.counters_list.viewmodel
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.*
 import com.cornershop.counterstest.data.model.Counter
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
 import com.cornershop.counterstest.utils.Constants
-import com.cornershop.counterstest.utils.Resource
-import com.cornershop.counterstest.utils.States
+import com.cornershop.counterstest.utils.sealed_classes.MainListUiState
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -20,14 +21,26 @@ import javax.inject.Inject
 class CountersListViewModel @Inject constructor(private val repo: CounterUseCases) : ViewModel() {
 
 
-    private val mutableAppState = MutableLiveData<States>()
+    private val _mainListUiState = MutableStateFlow<MainListUiState>(MainListUiState.Initial)
+    val mainListUiState : StateFlow<MainListUiState> = _mainListUiState
+    //val hasOrNotContent = MutableStateFlow(false)
+
     private val mutableCounterList = MutableLiveData<ArrayList<Counter>>()
+    private val loadTrigger = MutableLiveData(Unit)
     private val mutableCountersDeletedList = MutableLiveData<ArrayList<Counter>>()
     private val mutableCounter = MutableLiveData<Counter>()
     private lateinit var modificationType : String
 
-    fun attempGetData(value: States) {
-        mutableAppState.value = value
+    init {
+        _mainListUiState.value = MainListUiState.Initial
+    }
+
+    fun attemptGetData() {
+        loadTrigger.value = Unit
+    }
+
+    fun hasOrNotContent(hasContent : Boolean){
+        _mainListUiState.value = if(hasContent) MainListUiState.HasContent else MainListUiState.NoContent
     }
 
     fun deleteCountersList(list: ArrayList<Counter>){
@@ -43,9 +56,10 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
         this.modificationType = changeType
     }
 
-    val counterList   = mutableAppState.switchMap {
+
+    val counterList   = loadTrigger.switchMap {
         liveData(Dispatchers.IO) {
-            emit(Resource.Loading())
+            _mainListUiState.value = MainListUiState.Loading
             try {
                 emit(repo.getList())
             } catch (e: Throwable) {
@@ -56,6 +70,7 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                     }
                     else -> {
                         emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
                     }
                 }
             }
@@ -65,18 +80,20 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
     val counterListChange = mutableCounterList.switchMap { list ->
         liveData(Dispatchers.IO) {
             emit(Resource.Success(list))
+            _mainListUiState.value = MainListUiState.HasContent
         }
     }
 
     val observeDeletedItems   = mutableCountersDeletedList.switchMap { list ->
         liveData(Dispatchers.IO) {
-            emit(Resource.Loading())
+            _mainListUiState.value = MainListUiState.Loading
             try {
 
                 list.mapIndexed { index, counter ->
                     repo.deleteCounter(counter.id)
                     if(list.size == index + 1)  emit(repo.deleteCounter(counter.id))
                 }
+                _mainListUiState.value = MainListUiState.HasContent
 
             } catch (e: Throwable) {
                 delay(TimeUnit.SECONDS.toMillis(1))
@@ -86,6 +103,7 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                     }
                     else -> {
                         emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
                     }
                 }
             }
@@ -94,12 +112,13 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
 
     val observeCounterModification   = mutableCounter.switchMap { counter ->
         liveData(Dispatchers.IO) {
-            emit(Resource.Loading())
+            _mainListUiState.value = MainListUiState.Loading
             try {
                 when(modificationType){
                     Constants.INCREASE -> emit(repo.increaseCounter(counter.id))
                     Constants.DECREASE -> emit(repo.decreaseCounter(counter.id))
                 }
+                _mainListUiState.value = MainListUiState.HasContent
             } catch (e: Throwable) {
                 delay(TimeUnit.SECONDS.toMillis(1))
                 when (e) {
@@ -108,6 +127,7 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                     }
                     else -> {
                         emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
                     }
                 }
             }

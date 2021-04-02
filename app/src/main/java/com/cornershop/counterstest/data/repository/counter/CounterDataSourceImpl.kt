@@ -4,7 +4,7 @@ import com.cornershop.counterstest.data.api.RetrofitClient
 import com.cornershop.counterstest.data.api.request.IdCounterRequest
 import com.cornershop.counterstest.data.api.request.TitleCounterRequest
 import com.cornershop.counterstest.data.model.Counter
-import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import javax.inject.Inject
 
 class CounterDataSourceImpl @Inject constructor(): CounterDataSource {
@@ -16,7 +16,7 @@ class CounterDataSourceImpl @Inject constructor(): CounterDataSource {
         return Resource.Success(RetrofitClient.webservice.addCounter(TitleCounterRequest(title)))
     }
 
-    override suspend fun deleteCounter(id : String):  Resource<List<Counter>> {
+    override suspend fun deleteCounter(id : String): Resource<List<Counter>> {
         return Resource.Success(RetrofitClient.webservice.deleteCounter(IdCounterRequest(id)))
     }
 
