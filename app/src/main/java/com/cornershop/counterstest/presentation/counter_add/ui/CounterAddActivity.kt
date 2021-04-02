@@ -16,7 +16,7 @@ import com.cornershop.counterstest.presentation.utils.closeKeyboard
 import com.cornershop.counterstest.presentation.utils.extencion_functions.makeLinks
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrGone
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
-import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +42,6 @@ class CounterAddActivity : AppCompatActivity() {
     private fun setupObserveAddCounter() {
         viewModel.addCounterObservable.observe(this) { result ->
             when (result) {
-                is Resource.Loading -> saving()
                 is Resource.Success -> addCounterSuccess(result.data)
                 is Resource.Failure -> showError(result.errorMessage)
                 is Resource.NetworkError -> showError(getString(R.string.connection_error_description))

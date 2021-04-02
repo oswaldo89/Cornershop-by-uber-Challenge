@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
-import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -23,7 +23,6 @@ class CounterAddViewModel @Inject constructor(private val repo: CounterUseCases)
 
     val addCounterObservable   = counterName.switchMap { name ->
         liveData(Dispatchers.IO) {
-            emit(Resource.Loading())
             try {
                 emit(repo.addCounter(name))
             }catch (e: Throwable) {

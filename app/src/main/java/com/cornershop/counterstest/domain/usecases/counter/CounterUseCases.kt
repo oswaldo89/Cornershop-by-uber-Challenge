@@ -1,7 +1,7 @@
 package com.cornershop.counterstest.domain.usecases.counter
 
 import com.cornershop.counterstest.data.model.Counter
-import com.cornershop.counterstest.utils.Resource
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 
 interface CounterUseCases{
     suspend fun getList() : Resource<List<Counter>>

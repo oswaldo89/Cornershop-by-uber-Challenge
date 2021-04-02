@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,15 +31,17 @@ import com.cornershop.counterstest.presentation.utils.extencion_functions.visibl
 import com.cornershop.counterstest.presentation.utils.extencion_functions.visibleOrInvisible
 import com.cornershop.counterstest.presentation.utils.vibrateOnTouch
 import com.cornershop.counterstest.utils.Constants
-import com.cornershop.counterstest.utils.Resource
-import com.cornershop.counterstest.utils.States
+import com.cornershop.counterstest.utils.sealed_classes.MainListUiState
+import com.cornershop.counterstest.utils.sealed_classes.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
 class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICounterList {
 
-    override fun getViewBinding(): ActivityCountersListBinding = ActivityCountersListBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityCountersListBinding =
+        ActivityCountersListBinding.inflate(layoutInflater)
 
     private val viewModel by viewModels<CountersListViewModel>()
     private val countersListAdapter: CounterListAdapter = CounterListAdapter()
@@ -47,18 +50,75 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setupRecyclerView()
+        setUpObserveUiStates()
         setupObserveCountersList()
+        setupRecyclerView()
         setupFilterList()
+    }
 
-        viewModel.attempGetData(States.INITIAL)
+    private fun setUpObserveUiStates() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.mainListUiState.collect {
+                when (it) {
+                    is MainListUiState.Initial -> stateInitial()
+                    is MainListUiState.Loading -> stateLoading()
+                    is MainListUiState.NoContent -> stateHasNoContent()
+                    is MainListUiState.HasContent -> stateHasContent()
+                    is MainListUiState.Refreshing -> {
+                    }
+                    is MainListUiState.Error -> stateError(it.message)
+                }
+            }
+        }
+    }
+
+
+    //ui states with state flow
+    private fun stateInitial() {
+        viewModel.attemptGetData()
+
+        binding.textNumberItems.visibleOrGone(false, animate = false)
+        binding.textNumberTimes.visibleOrGone(false, animate = false)
+        binding.rvCounters.visibleOrGone(false, animate = false)
+        binding.networkLayout.content.visibleOrGone(false, animate = false)
+        binding.emptyLayout.content.visibleOrGone(false, animate = false)
+
+        countersListAdapter.disableAllSelections()
+        disableToolbar()
+    }
+
+    private fun stateLoading() {
+        showLoading(true)
+    }
+
+    private fun stateHasContent() {
+        showLoading(false)
+        binding.textNumberItems.visibleOrGone(true, animate = false)
+        binding.textNumberTimes.visibleOrGone(true, animate = false)
+        binding.rvCounters.visibleOrGone(true, animate = false)
+        binding.networkLayout.content.visibleOrGone(false, animate = false)
+        binding.emptyLayout.content.visibleOrGone(false, animate = false)
+    }
+
+    private fun stateHasNoContent() {
+        showLoading(false)
+        binding.textNumberItems.visibleOrGone(false, animate = false)
+        binding.textNumberTimes.visibleOrGone(false, animate = false)
+        binding.emptyLayout.content.visibleOrGone(true, animate = false)
+        binding.rvCounters.visibleOrGone(false, animate = false)
+    }
+
+    private fun stateError(message: String) {
+        binding.textNumberItems.visibleOrGone(false, animate = false)
+        binding.textNumberTimes.visibleOrGone(false, animate = false)
     }
 
     private fun setupFilterList() {
-        binding.inputSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+        binding.inputSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 countersListAdapter.filter.filter(newText)
                 return false
@@ -88,10 +148,13 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     private fun setupObserveCountersList() {
         viewModel.counterList.observe(this) { result ->
             when (result) {
-                is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
-                is Resource.NetworkError -> {showLoading(false); networkErrorLayout()}
+                is Resource.Failure -> {
+                    showError(result.errorMessage)
+                }
+                is Resource.NetworkError -> {
+                    showLoading(false); networkErrorLayout()
+                }
             }
         }
         //observe when another process altering the counters list ( refresh )
@@ -101,19 +164,25 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         //when deleting any counters
         viewModel.observeDeletedItems.observe(this) { result ->
             when (result) {
-                is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
-                is Resource.NetworkError -> {showLoading(false);  showError(getString(R.string.connection_error_description)) }
+                is Resource.Failure -> {
+                    showError(result.errorMessage)
+                }
+                is Resource.NetworkError -> {
+                    showLoading(false); showError(getString(R.string.connection_error_description))
+                }
             }
         }
         //observe when counter is modifing
         viewModel.observeCounterModification.observe(this) { result ->
             when (result) {
-                is Resource.Loading -> showLoading(true)
                 is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> { showLoading(false); showError(result.errorMessage) }
-                is Resource.NetworkError -> {showLoading(false); showError(getString(R.string.connection_error_description))}
+                is Resource.Failure -> {
+                    showError(result.errorMessage)
+                }
+                is Resource.NetworkError -> {
+                    showLoading(false); showError(getString(R.string.connection_error_description))
+                }
             }
         }
     }
@@ -123,41 +192,32 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     private fun networkErrorLayout() {
-        binding.networkLayout.content.visibleOrGone(true)
+        binding.networkLayout.content.visibleOrGone(true, animate = false)
     }
 
     private fun setLayoutInformation(data: List<Counter>) {
-        showLoading(false)
-        initialState()
-        if (data.isNotEmpty()) setCountersData(data) else showEmptyLayout(true)
+        if (data.isNotEmpty()) setCountersData(data) else viewModel.hasOrNotContent(false)
     }
 
     private fun showLoading(loading: Boolean) {
-        if (loading) binding.progressBar.visibleOrGone(true) else binding.progressBar.gone(false )
-    }
-
-    private fun showEmptyLayout(isVisible: Boolean) {
-        binding.textNumberItems.visibleOrGone(!isVisible)
-        binding.textNumberTimes.visibleOrGone(!isVisible)
-        binding.emptyLayout.content.visibleOrGone(isVisible)
-        binding.rvCounters.visibleOrGone(!isVisible,false)
+        if (loading) binding.progressBar.visibleOrGone(true, animate = false) else binding.progressBar.gone(false)
     }
 
     private fun setCountersData(data: List<Counter>) {
-        binding.networkLayout.content.visibleOrGone(false)
-        showEmptyLayout(false)
         countersListAdapter.recyclerAdapter(data, this)
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
         binding.textNumberTimes.text = String.format(getString(R.string.n_times), countersListAdapter.getTimesCounters())
+
+        viewModel.hasOrNotContent(true)
     }
 
-    private fun initialState(){
+    private fun initialState() {
         countersListAdapter.disableAllSelections()
         disableToolbar()
     }
 
-    private fun enableAndUpdateToolbar(){
+    private fun enableAndUpdateToolbar() {
         showToolbar()
         binding.cardSeachView.visibleOrInvisible(false, animate = false)
 
@@ -166,7 +226,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         changeTitleToolbar(selectedCount)
     }
 
-    private fun disableToolbar(){
+    private fun disableToolbar() {
         hideToolbar()
         binding.cardSeachView.visibleOrInvisible(true, animate = true)
     }
@@ -178,7 +238,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
             binding.rvCounters.vibrateOnTouch()
         }
 
-        if(countersListAdapter.getTotalSelectedCounters() == 0)
+        if (countersListAdapter.getTotalSelectedCounters() == 0)
             disableToolbar()
 
         enableAndUpdateToolbar()
@@ -199,16 +259,16 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     override fun onBackPressed() {
-        if(countersListAdapter.getTotalSelectedCounters() > 0){
+        if (countersListAdapter.getTotalSelectedCounters() > 0) {
             initialState()
-        }else{
+        } else {
             super.onBackPressed()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if(countersListAdapter.getTotalSelectedCounters() > 0){
+        if (countersListAdapter.getTotalSelectedCounters() > 0) {
             enableAndUpdateToolbar()
         }
     }
@@ -218,7 +278,9 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
             android.R.id.home -> {
                 initialState(); true
             }
-            R.id.action_delete -> { deleteCounters(); true }
+            R.id.action_delete -> {
+                deleteCounters(); true
+            }
             R.id.action_share -> {
                 Toast.makeText(this, "click on share", Toast.LENGTH_LONG).show(); true
             }
@@ -226,7 +288,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         }
     }
 
-    private fun deleteCounters(){
+    private fun deleteCounters() {
         val countersSelected = countersListAdapter.getSelectedCounters()
         viewModel.deleteCountersList(ArrayList(countersSelected))
     }
@@ -242,10 +304,11 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     fun retryBtn(@Suppress("UNUSED_PARAMETER") view: View) {
-        viewModel.attempGetData(States.RETRY)
+        viewModel.attemptGetData()
     }
 
-    private val startForAddCounterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+    private val startForAddCounterResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent = result.data
                 intent?.let {

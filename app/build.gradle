@@ -11,7 +11,7 @@ android {
 
     productFlavors {
         develop {
-            buildConfigField "String", "BASE_URL", "\"http://3171ac706add.ngrok.io/api/v1/\""
+            buildConfigField "String", "BASE_URL", "\"http://6dd72333528d.ngrok.io/api/v1/\""
         }
     }
 
@@ -73,6 +73,10 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.31.2-alpha"
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     kapt 'androidx.hilt:hilt-compiler:1.0.0-beta01'
+
+    //coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
 
     //test
     testImplementation 'junit:junit:4.13.2'
