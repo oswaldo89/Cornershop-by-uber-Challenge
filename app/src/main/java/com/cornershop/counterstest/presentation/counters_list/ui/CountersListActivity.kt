@@ -3,12 +3,10 @@ package com.cornershop.counterstest.presentation.counters_list.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -64,14 +62,45 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
                     is MainListUiState.Loading -> stateLoading()
                     is MainListUiState.NoContent -> stateHasNoContent()
                     is MainListUiState.HasContent -> stateHasContent()
-                    is MainListUiState.Refreshing -> {
-                    }
+                    is MainListUiState.Refreshing -> {}
                     is MainListUiState.Error -> stateError(it.message)
                 }
             }
         }
     }
 
+    private fun setupObserveCountersList() {
+        viewModel.counterList.observe(this) { result ->
+            executeObserveResult(result, false)
+        }
+        //observe when another process altering the counters list ( refresh )
+        viewModel.counterListChange.observe(this) { result ->
+            setLayoutInformation(result.data)
+        }
+        //when deleting any counters
+        viewModel.observeDeletedItems.observe(this) { result ->
+            executeObserveResult(result, true)
+        }
+        //observe when counter is modifing
+        viewModel.observeCounterModification.observe(this) { result ->
+            executeObserveResult(result, true)
+        }
+    }
+
+    private fun executeObserveResult(result: Resource<List<Counter>>, showDialogError: Boolean) {
+        when (result) {
+            is Resource.Success -> setLayoutInformation(result.data)
+            is Resource.Failure -> showError(result.errorMessage)
+            is Resource.NetworkError -> {
+                showLoading(false)
+                if(showDialogError){
+                    showError(getString(R.string.connection_error_description))
+                }else{
+                    networkErrorLayout()
+                }
+            }
+        }
+    }
 
     //ui states with state flow
     private fun stateInitial() {
@@ -145,48 +174,6 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         })
     }
 
-    private fun setupObserveCountersList() {
-        viewModel.counterList.observe(this) { result ->
-            when (result) {
-                is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> {
-                    showError(result.errorMessage)
-                }
-                is Resource.NetworkError -> {
-                    showLoading(false); networkErrorLayout()
-                }
-            }
-        }
-        //observe when another process altering the counters list ( refresh )
-        viewModel.counterListChange.observe(this) { result ->
-            setLayoutInformation(result.data)
-        }
-        //when deleting any counters
-        viewModel.observeDeletedItems.observe(this) { result ->
-            when (result) {
-                is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> {
-                    showError(result.errorMessage)
-                }
-                is Resource.NetworkError -> {
-                    showLoading(false); showError(getString(R.string.connection_error_description))
-                }
-            }
-        }
-        //observe when counter is modifing
-        viewModel.observeCounterModification.observe(this) { result ->
-            when (result) {
-                is Resource.Success -> setLayoutInformation(result.data)
-                is Resource.Failure -> {
-                    showError(result.errorMessage)
-                }
-                is Resource.NetworkError -> {
-                    showLoading(false); showError(getString(R.string.connection_error_description))
-                }
-            }
-        }
-    }
-
     private fun showError(errorMessage: String?) {
         ErrorDialog(errorMessage).show(supportFragmentManager, "ErrorDialogFragment")
     }
@@ -208,7 +195,6 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
         binding.rvCounters.adapter = countersListAdapter
         binding.textNumberItems.text = String.format(getString(R.string.n_items), countersListAdapter.itemCount)
         binding.textNumberTimes.text = String.format(getString(R.string.n_times), countersListAdapter.getTimesCounters())
-
         viewModel.hasOrNotContent(true)
     }
 
@@ -232,15 +218,12 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     override fun onItemClick(item: Counter, position: Int) {
-
         if (countersListAdapter.getTotalSelectedCounters() > 0) {
             countersListAdapter.singleSelection(item, position)
             binding.rvCounters.vibrateOnTouch()
         }
-
         if (countersListAdapter.getTotalSelectedCounters() == 0)
             disableToolbar()
-
         enableAndUpdateToolbar()
     }
 
@@ -275,15 +258,9 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                initialState(); true
-            }
-            R.id.action_delete -> {
-                deleteCounters(); true
-            }
-            R.id.action_share -> {
-                Toast.makeText(this, "click on share", Toast.LENGTH_LONG).show(); true
-            }
+            android.R.id.home -> { initialState(); true }
+            R.id.action_delete -> { deleteCounters(); true }
+            R.id.action_share -> { true }
             else -> super.onOptionsItemSelected(item)
         }
     }
