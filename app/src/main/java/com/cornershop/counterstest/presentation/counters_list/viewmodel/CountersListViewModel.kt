@@ -69,8 +69,12 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                         emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
                     }
                     else -> {
-                        emit(Resource.Failure(e.message ?: "Unknown Error", e))
-                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        if(e.message == "HTTP 404 Not Found"){
+                            emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
+                        }else{
+                            emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                            _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        }
                     }
                 }
             }
@@ -102,8 +106,12 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                         emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
                     }
                     else -> {
-                        emit(Resource.Failure(e.message ?: "Unknown Error", e))
-                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        if(e.message == "HTTP 404 Not Found"){
+                            emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
+                        }else{
+                            emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                            _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        }
                     }
                 }
             }
@@ -126,8 +134,12 @@ class CountersListViewModel @Inject constructor(private val repo: CounterUseCase
                         emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
                     }
                     else -> {
-                        emit(Resource.Failure(e.message ?: "Unknown Error", e))
-                        _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        if(e.message == "HTTP 404 Not Found"){
+                            emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
+                        }else{
+                            emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                            _mainListUiState.value = MainListUiState.Error(e.message ?: "Unknown Error")
+                        }
                     }
                 }
             }

@@ -138,6 +138,7 @@ class CountersListActivity : BaseActivity<ActivityCountersListBinding>(), ICount
     }
 
     private fun stateError(message: String) {
+        showLoading(false)
         binding.textNumberItems.visibleOrGone(false, animate = false)
         binding.textNumberTimes.visibleOrGone(false, animate = false)
     }

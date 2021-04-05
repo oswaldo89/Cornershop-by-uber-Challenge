@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.cornershop.counterstest.domain.usecases.counter.CounterUseCases
+import com.cornershop.counterstest.utils.sealed_classes.MainListUiState
 import com.cornershop.counterstest.utils.sealed_classes.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,11 @@ class CounterAddViewModel @Inject constructor(private val repo: CounterUseCases)
                         emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
                     }
                     else -> {
-                        emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                        if(e.message == "HTTP 404 Not Found"){
+                            emit(Resource.NetworkError(e.message ?: "Unknown Error", e))
+                        }else{
+                            emit(Resource.Failure(e.message ?: "Unknown Error", e))
+                        }
                     }
                 }
             }
